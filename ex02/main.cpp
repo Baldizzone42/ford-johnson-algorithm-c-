@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/17 20:42:21 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/18 21:28:33 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,8 @@ std::list<PmergeMe*> arraymerge(std::list<PmergeMe*>lst)
 		result.push_back(nodo);
 		i++;
 	}
-	
 	return result;
 }
-
-
 
 void print(std::list<PmergeMe*>lst)
 {
@@ -87,13 +84,11 @@ void print(std::list<PmergeMe*>lst)
 	while(it != itend)
 	{
 		int i = 0;
-		//int size = size_array((*it)->str);
-		while(i < (*it)->size) /// calcular tamaño de iterator;
+		while(i < (*it)->size)
 		{
 			std::cout << (*it)->array[i] << ".";
 			i++;
 		}
-		//std::cout << "SIZZZZE: " << (*it)->size << std::endl;
 		std::cout << " // ";
 		it++;
 	}
@@ -108,11 +103,13 @@ void sort(std::list<PmergeMe*> sequence, size_t npairs)
 	while(itsecond != itend)
 	{
 		itsecond++;
+		if(itsecond != itend && (*itsecond)->size != (int)npairs)
+			break ;
 		if(itsecond != itend && (*it)->array[npairs - 1] > (*itsecond)->array[npairs - 1])
 		{
-			int temp = (*it)->array[npairs - 1];
-			(*it)->array[npairs -1] = (*itsecond)->array[npairs - 1];
-			(*itsecond)->array[npairs - 1] = temp;
+			int *temp = (*it)->array;
+			(*it)->array = (*itsecond)->array;
+			(*itsecond)->array = temp;
 		}
 		else if(itsecond == itend)
 			break;
@@ -127,14 +124,14 @@ int* fusion_array(int *a, int *b, size_t npairs)
 	int *temp = new int[npairs];
 	size_t i = 0;
 	size_t j = 0;
-	while(i < npairs - 1)
+	while(i < (npairs / 2))
 	{
 		temp[j] = a[i];
 		i++;
 		j++;
 	}
 	i = 0;
-	while(i < npairs - 1)
+	while(i < (npairs / 2))
 	{
 		temp[j] = b[i];
 		i++;
@@ -169,15 +166,20 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 		itsecond++;
 		if(itsecond != itend)
 		{
-			//std::cout << "multiplicasiao: "  <<(*it)->size << " * " << npairs <<std::endl;
-			(*it)->size = ((*it)->size * npairs);
-			(*itsecond)->size = ((*itsecond)->size * npairs);// aumenta 2 / 4
-			//std::cout << "it->size " << (*it)->size << std::endl;
+			//std::cout << (*it)->size << " <-it   tsecond-> " << (*itsecond)->size << std::endl;
+			if((*it)->size != (*itsecond)->size)
+				(*it)->size += (*itsecond)->size;
+			else	
+			{
+				(*it)->size = npairs;
+				(*itsecond)->size = npairs;
+			}
 			PmergeMe *node = new PmergeMe;
 			int *temp = new int[npairs];
 			temp = fusion_array((*it)->array, (*itsecond)->array, npairs);
-			size_t i = 0;
-			while(i < npairs)
+			int i = 0;
+			
+			while(i < ((*it)->size))
 			{
 				node->str[i] = (*it)->str[i];
 				node->array[i] = temp[i];
@@ -190,10 +192,8 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 		{
 			int i = 0;
 			PmergeMe *node = new PmergeMe;
-			(*it)->size = 1;
 			int *temp = new int[(*it)->size];
 			temp = infusion_array((*it)->array, (*it)->size);
-			(*it)->size = 1;
 			while(i < (*it)->size)
 			{
 				node->str[i] = (*it)->str[i];
@@ -211,6 +211,45 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 }
 
 
+void label(std::list<PmergeMe*>sequence, size_t npairs)
+{
+	std::list<PmergeMe*>::iterator it = sequence.begin();
+	std::list<PmergeMe*>::iterator itend = sequence.end();
+	int i = 1;
+	int a = 1;
+	int b = 1;
+	while(it != itend)
+	{
+		std::cout << (*it)->size << std::endl;
+		if(((*it)->size == (int)npairs) && i % 2 != 0)
+		{
+			//std::to_String no funciona solo en c++11 sus muertos
+			std::ostringstream bnumber;
+			bnumber << b;
+			(*it)->label[0] = ("b" + bnumber.str());
+			b++;
+		}
+		else if(((*it)->size == (int)npairs) && i % 2 == 0)
+		{
+			std::ostringstream anumber;
+			anumber << a;
+			(*it)->label[0] = "a" + anumber.str();
+			a++;
+		}
+		else
+			(*it)->label[0] = "Non-participating"; 
+		it++;
+		i++;
+	}
+	std::list<PmergeMe*>::iterator itt = sequence.begin();
+	std::list<PmergeMe*>::iterator ittend = sequence.end();
+	while(itt != ittend)
+	{
+		std::cout << (*itt)->label[0] << std::endl;
+		itt++;
+	}
+}
+
 int main(int argc, char **argv)
 {
 	if(argc == 1)
@@ -227,15 +266,20 @@ int main(int argc, char **argv)
 	std::cout << AZUL << "Our original sequence: \n", print(sequence);
 	while(sequence.size() >= npairs)
 	{
-		std::cout << MORADO << "Recursion level " << level << ": " << std::endl;
-		print(sequence);
+		std::cout << MORADO << "Recursion level " << level << ": " << std::endl , print(sequence);
 		std::cout << VERDE << "Sequence after sorting: \n";
 		sort(sequence, npairs), print(sequence);
 		npairs = 2 * npairs;
 		std::list<PmergeMe*> newsq;
 		newsq = fusion(sequence, npairs);
+		//std::cout << "Size npairs: " << npairs << std::endl;
 		std::cout  << AZUL << "Fusion " << level++ << ": ", print(newsq);
-		break ;
+		sequence = newsq;
 	} 
+	label(sequence, npairs);
+	// tengo que crear ahora mi array de arrays main y meter b1 y todos los a's
+	// otro array pending que empieza con b2 y el resto de b's
+	// y non participating
+
 	return 0;
 }

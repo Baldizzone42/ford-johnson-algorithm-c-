@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:31:19 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/17 20:20:11 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/18 21:10:03 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 PmergeMe::PmergeMe(){
 	this->str = new std::string[3000];
 	this->array =  new int[3000];
-	this->label = new std::string[2];
+	this->label = new std::string[1];
 	this->size = 1;
 	
 }
@@ -33,7 +33,6 @@ PmergeMe::PmergeMe(const PmergeMe &copy){
 }
 
 PmergeMe& PmergeMe::operator=(const PmergeMe &other){
-	//std::cout << "+++++++++++++++++++++++++++++++++++BACALOA\n";
 	(void)other;
 	return *this;
 }
@@ -57,16 +56,5 @@ std::list<PmergeMe*> PmergeMe::init(PmergeMe* merge, char **argv)
 		i++;
 		j++;
 	}
-	/* std::list<PmergeMe*>::iterator it = lst.begin();
-	std::list<PmergeMe*>::iterator itend = lst.end();
- 	int h = 0;
-	while(it != itend )
-	{
-		std::cout << (*it)->array[h] << " ";
-		std::cout << (*it)->str[h] << ",";
-		it++;
-		h++;
-	}	
-	std::cout << std::endl; */
 	return lst;
 }
