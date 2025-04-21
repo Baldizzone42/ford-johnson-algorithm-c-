@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/21 15:20:58 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:59:26 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,40 +42,27 @@ int check_sintax(std::list<PmergeMe*>lst)
 
 int check_duplicate(std::list<PmergeMe*>lst)
 {
-	if(lst.size() == 1 || lst.size() >= 3000)
-		return (std::cout <<"Error: Non-orderable number size.\n"), 1;
-	std::list<PmergeMe*>::iterator it = lst.begin(); 
-	size_t i = 0;	
-	while(i < lst.size())
+	if(lst.size() == 1 || lst.size() > 3000)
+		return (std::cout << "Error: Non-orderable number size.\n"), 1;
+	std::list<PmergeMe*>::iterator it = lst.begin();
+	std::list<PmergeMe*>::iterator itsecond = lst.begin();
+	std::list<PmergeMe*>::iterator itend = lst.end(); 
+	while(it != itend)
 	{
-		size_t j = i + 1;
-		while(j < lst.size())
+		itsecond = it;
+		itsecond++;
+		while(itsecond != itend)
 		{
-			if((*it)->array[i] == (*it)->array[j])
+			if((*it)->array[0] == (*itsecond)->array[0])
 				return (std::cout << "Error: repeated number\n"), 1;
-			j++;
+			itsecond++;
 		}
-		i++;
+		it++;
 	}
 	return 0;
 }
 
 
-std::list<PmergeMe*> arraymerge(std::list<PmergeMe*>lst)
-{
-	std::list<PmergeMe*>result;
-	std::list<PmergeMe*>::iterator it = lst.begin();
-	size_t i = 0;
-	while(i < lst.size())
-	{
-		PmergeMe *nodo = new PmergeMe;
-		nodo->array[0] = (*it)->array[i];
-		nodo->str[0] = (*it)->str[i];
-		result.push_back(nodo);
-		i++;
-	}
-	return result;
-}
 
 void print(std::list<PmergeMe*>lst)
 {
@@ -119,35 +106,21 @@ void sort(std::list<PmergeMe*> sequence, size_t npairs)
 }
 
 
-int* fusion_array(int *a, int *b, size_t npairs)
+int* fusion_array(PmergeMe *a, PmergeMe *b, size_t npairs)
 {
 	int *temp = new int[npairs];
-	size_t i = 0;
+	int i = 0;
 	size_t j = 0;
-	while(i < (npairs / 2))
+	while(i < a->size)
 	{
-		temp[j] = a[i];
+		temp[j] = (*a).array[i];
 		i++;
 		j++;
 	}
 	i = 0;
-	while(i < (npairs / 2))
+	while(i < b->size)
 	{
-		temp[j] = b[i];
-		i++;
-		j++;
-	}
-	return temp;
-}
-
-int* infusion_array(int *a, int size)
-{
-	int *temp = new int[size];
-	int i = 0;
-	int j = 0;
-	while(i < size)
-	{
-		temp[j] = a[i];
+		temp[j] = (*b).array[i];
 		i++;
 		j++;
 	}
@@ -163,49 +136,30 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 	std::list<PmergeMe*>::iterator itend = sequence.end();
 	while(it != itend)
 	{
+		itsecond = it;
 		itsecond++;
-		if(itsecond != itend)
+		if(itsecond != itend && (*it)->size == (*itsecond)->size)
 		{
-			//std::cout << (*it)->size << " <-it   tsecond-> " << (*itsecond)->size << std::endl;
-			if((*it)->size != (*itsecond)->size)
-				(*it)->size += (*itsecond)->size;
-			else	
-			{
-				(*it)->size = npairs;
-				(*itsecond)->size = npairs;
-			}
-			PmergeMe *node = new PmergeMe;
-			int *temp = new int[npairs];
-			temp = fusion_array((*it)->array, (*itsecond)->array, npairs);
-			int i = 0;
-			
-			while(i < ((*it)->size))
-			{
-				node->str[i] = (*it)->str[i];
-				node->array[i] = temp[i];
-				node->size = (*it)->size;
-				i++;
-			}
-			result.push_back(node);
+			int *arrayy = fusion_array((*it), (*itsecond), npairs);
+			PmergeMe *temp = new PmergeMe(npairs);
+			temp->array = arrayy;
+			result.push_back(temp);
+			it++;
+		}
+		else if(itsecond != itend)
+		{
+			int *arrayy = fusion_array((*it), (*itsecond), npairs);
+			PmergeMe *temp = new PmergeMe((int)((*it)->size  + (*itsecond)->size));
+			temp->array = arrayy;
+			result.push_back(temp);
+			it++;
 		}
 		else if(itsecond == itend)
 		{
-			int i = 0;
-			PmergeMe *node = new PmergeMe;
-			int *temp = new int[(*it)->size];
-			temp = infusion_array((*it)->array, (*it)->size);
-			while(i < (*it)->size)
-			{
-				node->str[i] = (*it)->str[i];
-				node->array[i] = temp[i];
-				node->size = (*it)->size;
-				i++;
-			}
-			result.push_back(node);
-			return result;
+			PmergeMe *temp = new PmergeMe((*it));
+			result.push_back(temp);
 		}
-		it++, it++;
-		itsecond++;
+		++it;
 	}
 	return result;
 }
@@ -226,18 +180,18 @@ void label(std::list<PmergeMe*>sequence, size_t npairs)
 			//std::to_String no funciona solo en c++11 sus muertos
 			std::ostringstream bnumber;
 			bnumber << b;
-			(*it)->label[0] = ("b" + bnumber.str());
+			(*it)->label = ("b" + bnumber.str());
 			b++;
 		}
 		else if(((*it)->size == (int)npairs) && i % 2 == 0)
 		{
 			std::ostringstream anumber;
 			anumber << a;
-			(*it)->label[0] = "a" + anumber.str();
+			(*it)->label = "a" + anumber.str();
 			a++;
 		}
 		else
-			(*it)->label[0] = "Non-participating"; 
+			(*it)->label = "Non-participating"; 
 		it++;
 		i++;
 	}
@@ -245,7 +199,7 @@ void label(std::list<PmergeMe*>sequence, size_t npairs)
 	std::list<PmergeMe*>::iterator ittend = sequence.end();
 	while(itt != ittend)
 	{
-		std::cout << (*itt)->label[0] << std::endl;
+		std::cout << (*itt)->label << std::endl;
 		itt++;
 	}
 }
@@ -258,7 +212,7 @@ bool jacobcheck(std::list<PmergeMe*> sequence)
 	int x = 0;
 	while(it != itend)
 	{
-		if((*it)->label[0] == "b2")
+		if((*it)->label == "b2")
 			x++;
 		it++;
 	}
@@ -272,8 +226,8 @@ bool jacobcheck(std::list<PmergeMe*> sequence)
 PmergeMe** divide_node(PmergeMe* node, size_t npairs)
 {
 	PmergeMe **result = new PmergeMe*[2];
-	result[0] = new PmergeMe;
-	result[1] = new PmergeMe;
+	result[0] = new PmergeMe(npairs);
+	result[1] = new PmergeMe(node->size - npairs);
 	//std::cout << "Npairs: " << npairs << std::endl;
 	int i = 0;
 	while(i < (int)npairs)
@@ -405,12 +359,12 @@ int main(int argc, char **argv)
 {
 	if(argc == 1)
 		return (std::cerr << "Wrong number of arguments.\n"), 1;
-	PmergeMe* merge = new PmergeMe();
-	std::list<PmergeMe*>lst;
-	lst = merge->init(merge, argv);
-	if(check_duplicate(lst) || check_sintax(lst))
+	std::list<PmergeMe*>sequence;
+	std::cout << "//////////////////Aqui/////////////////////" << std::endl;
+	sequence = PmergeMe::init(argv);
+	if(check_duplicate(sequence) || check_sintax(sequence))
 		return 1;
-	std::list<PmergeMe*> sequence = arraymerge(lst);
+	
 
 	size_t npairs = 1;
 	size_t level = 1;
@@ -422,8 +376,9 @@ int main(int argc, char **argv)
 		sort(sequence, npairs), print(sequence);
 		npairs = 2 * npairs;
 		std::list<PmergeMe*> newsq;
-		newsq = fusion(sequence, npairs);
+
 		//std::cout << "Size npairs: " << npairs << std::endl;
+		newsq = fusion(sequence, npairs);
 		std::cout  << AZUL << "Fusion " << level++ << ": ", print(newsq);
 		sequence = newsq;
 	}

@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:31:19 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/21 15:13:37 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:41:51 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,21 @@ PmergeMe::PmergeMe(){
 	this->str = new std::string[3000];
 	this->size = 1;
 	this->array =  new int[1];
-	this->label = new std::string[1];
+	this->label = "";
+	
+}
+
+PmergeMe::PmergeMe(size_t n){
+	this->str = new std::string[3000];
+	this->size = n;
+	this->array =  new int[n];
+	this->label = "";
 	
 }
 
 PmergeMe::~PmergeMe(){
 	delete []str;
 	delete []array;
-	delete []label;
 }
 
 PmergeMe::PmergeMe(PmergeMe *copy){
@@ -31,7 +38,7 @@ PmergeMe::PmergeMe(PmergeMe *copy){
 	this->array = new int[this->size];
 	for(int i = 0; i < this->size; i++)
 		this->array[i] = copy->array[i];
-	this->label[0] = copy->label[0];
+	this->label = copy->label;
 }
 
 
@@ -46,24 +53,21 @@ PmergeMe::PmergeMe(const PmergeMe &copy){
 	this->array = new int[this->size];
 	for(int i = 0; i < this->size; i++)
 		this->array[i] = copy.array[i];
-	this->label[0] = copy.label[0];
+	this->label = copy.label;
 }
 
-std::list<PmergeMe*> PmergeMe::init(PmergeMe* merge, char **argv)
+std::list<PmergeMe*> PmergeMe::init (char **argv)
 {
-	(void)merge;
 	std::list<PmergeMe*>lst;
-	
 	int i = 1;
 	int j = 0;
 	while(argv[i])
 	{
+		PmergeMe *temp = new PmergeMe();
 		std::string s = argv[i];
-		this->str[j] = s;
-		int *temp = new int[1];
-		temp[0] = atoi(s.c_str());
-		this->array[j] = temp[0];
-		lst.push_back(this);
+		temp->str[j] = s;
+		temp->array[0] = atoi(s.c_str());
+		lst.push_back(temp);
 		i++;
 		j++;
 	}
