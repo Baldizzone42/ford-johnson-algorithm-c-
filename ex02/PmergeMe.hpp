@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:54:57 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/17 20:01:10 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/21 15:13:55 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class PmergeMe
 		~PmergeMe();
 		PmergeMe(const PmergeMe &copy);
 		PmergeMe& operator=(const PmergeMe &other);
+		PmergeMe(PmergeMe *copy);
 	
 		std::list<PmergeMe*> init(PmergeMe* merge, char **argv);
 

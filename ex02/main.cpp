@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/18 21:28:33 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/21 15:18:16 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ void label(std::list<PmergeMe*>sequence, size_t npairs)
 	int b = 1;
 	while(it != itend)
 	{
-		std::cout << (*it)->size << std::endl;
+		//std::cout << (*it)->size << std::endl;
 		if(((*it)->size == (int)npairs) && i % 2 != 0)
 		{
 			//std::to_String no funciona solo en c++11 sus muertos
@@ -241,15 +241,166 @@ void label(std::list<PmergeMe*>sequence, size_t npairs)
 		it++;
 		i++;
 	}
-	std::list<PmergeMe*>::iterator itt = sequence.begin();
+	/* std::list<PmergeMe*>::iterator itt = sequence.begin();
 	std::list<PmergeMe*>::iterator ittend = sequence.end();
 	while(itt != ittend)
 	{
 		std::cout << (*itt)->label[0] << std::endl;
 		itt++;
-	}
+	} */
 }
 
+
+bool jacobcheck(std::list<PmergeMe*> sequence)
+{
+	std::list<PmergeMe*>::iterator it = sequence.begin();
+	std::list<PmergeMe*>::iterator itend = sequence.end();
+	int x = 0;
+	while(it != itend)
+	{
+		if((*it)->label[0] == "b2")
+			x++;
+		it++;
+	}
+	if(!x)
+		return false;
+	return true;
+} 
+
+
+
+PmergeMe** divide_node(PmergeMe* node, size_t npairs)
+{
+	PmergeMe **result = new PmergeMe*[2];
+	result[0] = new PmergeMe;
+	result[1] = new PmergeMe;
+	//std::cout << "Npairs: " << npairs << std::endl;
+	int i = 0;
+	while(i < (int)npairs)
+	{
+		result[0]->array[i] = node->array[i];
+		i++;
+	}
+	result[0]->size = npairs;
+	int c = 0;
+	while(i < node->size)
+	{
+		result[1]->array[c] = node->array[i];
+		i++;
+		c++;
+	}
+	result[1]->size = (node->size - npairs);
+	return result;
+}
+
+
+std::list<PmergeMe*>divide(std::list<PmergeMe*>sequence, size_t npairs)
+{
+	std::list<PmergeMe*>::iterator it = sequence.begin();
+	std::list<PmergeMe*>::iterator itend = sequence.end();
+	std::list<PmergeMe*> result;
+	
+	while(it != itend)
+	{
+		if((*it)->size > (int)npairs)
+		{
+			PmergeMe **temp;
+			temp = divide_node((*it), npairs);
+			result.push_back(temp[0]);
+			result.push_back(temp[1]);
+		}
+		else
+			result.push_back((*it));
+		it++;	
+	}
+	return result;
+}
+
+/* std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
+{
+	std::list<PmergeMe*> main;
+	std::list<PmergeMe*>::iterator it = sequence.begin();
+	std::list<PmergeMe*>::iterator itend = sequence.end();
+	//making Main jacob
+	while(it != itend)
+	{
+		if((*it)->label[0] == "b1")
+		{
+			PmergeMe *temp = new PmergeMe((*it));
+			main.insert(it,(temp));
+			//sequence.erase(it);
+			it = sequence.begin();
+		}
+		else if((*it)->label[0].find('a'))
+		{
+			PmergeMe *temp = new PmergeMe((*it));
+			main.insert(it,(temp));
+			//sequence.erase(it);
+			it = sequence.begin();
+		}
+		else
+			it++;
+	}
+	std::list<PmergeMe*>::iterator itpo = main.begin();
+	std::list<PmergeMe*>::iterator itendpo = main.end();
+	while(itpo != itendpo)
+	{
+		
+		std::cout << (*itpo)->array<< "//";
+		itpo++;
+		std::cout << "holaaa";
+	}
+	std::cout << std::endl;
+	exit(42);
+	
+	//insert Pend a Main.
+	int jacob[] = {1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731};
+	std::list<PmergeMe*>::iterator itp = sequence.begin();
+	std::list<PmergeMe*>::iterator itendp = sequence.end();
+	int j = 0;
+	while(itp != itend)
+	{
+		
+		j++;
+		std::ostringstream number;
+		number << jacob[j];
+		while(itp != itendp && (*itp)->label[0] != "b" + number.str())
+		{
+			itp++;
+			if(itp == itend)
+			{
+				itp = sequence.begin();
+				jacob[j] -= 1;
+				number << jacob[j];
+				if(jacob[j] == 1)
+				{
+					//std::cout << "pendejo" << std::endl;
+					break;
+				}
+			}
+			else if((*itp)->label[0] == "b" + number.str())
+			{
+				std::list<PmergeMe*>::iterator mit = main.begin();
+				std::list<PmergeMe*>::iterator msecond = main.begin();
+				msecond++;
+				std::list<PmergeMe*>::iterator mend = main.end();
+				while(mit != mend)
+				{
+					if(((*itp)->array[npairs - 1] > (*mit)->array[npairs -1]) && ((*itp)->array[npairs - 1] < (*msecond)->array[npairs -1]))
+					{
+						main.insert(msecond, (*itp));
+						sequence.erase(itp);
+					}
+					mit++;
+					msecond++;
+				}
+			}	
+		}
+		itp++;
+	}
+	return main;
+} */
+		
 int main(int argc, char **argv)
 {
 	if(argc == 1)
@@ -275,11 +426,22 @@ int main(int argc, char **argv)
 		//std::cout << "Size npairs: " << npairs << std::endl;
 		std::cout  << AZUL << "Fusion " << level++ << ": ", print(newsq);
 		sequence = newsq;
-	} 
-	label(sequence, npairs);
-	// tengo que crear ahora mi array de arrays main y meter b1 y todos los a's
-	// otro array pending que empieza con b2 y el resto de b's
-	// y non participating
-
+	}
+	std::list<PmergeMe*> jacobsq; ///Jacobsthal se viene
+	while(npairs > 1)
+	{
+		label(sequence, npairs);
+		/* if(jacobcheck(sequence))
+		{
+			jacobsq = jacobsthal(sequence, npairs);
+			std::cout << "ciao jacobo" << std::endl;
+			std::cout << VERDE << "Jacobsthal: " << std::endl, print(jacobsq);
+		} */
+		npairs = npairs / 2;
+		if(npairs > 0)
+			jacobsq = divide(sequence, npairs);
+		std::cout << AMARILLO << "Divide: " << std::endl, print(jacobsq);
+		sequence = jacobsq;
+	}
 	return 0;
 }
