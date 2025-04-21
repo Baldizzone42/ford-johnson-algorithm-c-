@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/21 15:18:16 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/21 15:20:58 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,13 +241,13 @@ void label(std::list<PmergeMe*>sequence, size_t npairs)
 		it++;
 		i++;
 	}
-	/* std::list<PmergeMe*>::iterator itt = sequence.begin();
+	std::list<PmergeMe*>::iterator itt = sequence.begin();
 	std::list<PmergeMe*>::iterator ittend = sequence.end();
 	while(itt != ittend)
 	{
 		std::cout << (*itt)->label[0] << std::endl;
 		itt++;
-	} */
+	}
 }
 
 
@@ -442,6 +442,7 @@ int main(int argc, char **argv)
 			jacobsq = divide(sequence, npairs);
 		std::cout << AMARILLO << "Divide: " << std::endl, print(jacobsq);
 		sequence = jacobsq;
+		label(sequence, npairs);
 	}
 	return 0;
 }
