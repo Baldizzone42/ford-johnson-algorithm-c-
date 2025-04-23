@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:54:57 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/22 17:38:59 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/23 18:43:03 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class PmergeMe
 		std::string *str;
 		int size;
 		std::string label;
+		int lbl;
 		
 	private:
 	

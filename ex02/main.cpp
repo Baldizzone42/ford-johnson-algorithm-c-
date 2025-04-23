@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/23 18:00:35 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/23 21:49:44 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,7 @@ void label(std::list<PmergeMe*>sequence, size_t npairs)
 		{
 			std::ostringstream bnumber;
 			bnumber << b;
+			(*it)->lbl = b;
 			(*it)->label = ("b" + bnumber.str());
 			b++;
 		}
@@ -185,6 +186,7 @@ void label(std::list<PmergeMe*>sequence, size_t npairs)
 		{
 			std::ostringstream anumber;
 			anumber << a;
+			(*it)->lbl = a;
 			(*it)->label = "a" + anumber.str();
 			a++;
 		}
@@ -249,71 +251,95 @@ std::list<PmergeMe*>divide(std::list<PmergeMe*>sequence, size_t npairs)
 	return result;
 }
 
+std::list<PmergeMe*> final_jacob(std::list<PmergeMe*> main, std::list<PmergeMe*> pend , size_t npairs)
+{
+	std::list<PmergeMe*>::iterator rev = pend.end();
+	while(pend.size() > 0)
+	{
+		//std::cout << VERDE << pend.size() << std::endl;
+		rev--;
+		for(std::list<PmergeMe*>::iterator it = main.begin(); it != main.end();)
+		{
+			//std::cout << "Npairs ----------------> " << npairs << std::endl;
+			if((*it)->array[npairs - 1] > (*rev)->array[npairs - 1])
+			{
+				main.insert(it, (*rev));
+				pend.erase(rev);
+				it = main.begin();
+				break ;
+			}
+			it++;
+			if(it == main.end())
+			{
+				main.push_back((*rev));
+				return main;
+			}
+		}	
+	}
+	return main;
+}
 
 std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<PmergeMe*> pend, size_t npairs)
 {
-	int level[]  = {1, 3, 5, 11, 21, 43, 85, 171, 341,583, 1365, 2731};
-	//char *str[] = {"1", "3", "5", "11", "21", "43", "85", "171", "341", "583", "1365", "2731"};
-	int l = 0; /// vamos a reducirlo
-	int lvl  = 0; /// y lvl va a mantener el lvl jacobsthal
-	int flag = 0;
 	std::list<PmergeMe*>::iterator pet = pend.begin();
 	std::list<PmergeMe*>::iterator petend = pend.end();
-	//std::list<PmergeMe*>::reverse_iterator rever = pend.rend(); //reverse iterator
+	std::list<PmergeMe*>::iterator it = main.begin();
+	std::list<PmergeMe*>::iterator itend = main.end();
+	int level[]  = {1, 3, 5, 11, 21, 43, 85, 171, 341,583, 1365, 2731};
+	int x;	
+	int i = 1;
+	int flag = 0;
+	int get_out = 0;
+	
 	while(pend.size() > 0)
 	{
-		l++, lvl++;
+		std::list<PmergeMe*>::iterator out = pend.begin();
+		std::list<PmergeMe*>::iterator outend = pend.end();
+		x = level[i];
 		flag = 0;
-		while(pet != petend && level[l] > 1)
+		get_out = 0;
+		std::cout << "X:---------------------> " << x  << " Out.label " << (*out)->lbl << std::endl;
+		while(out != outend)
 		{
-			std::list<PmergeMe*>::iterator it = main.begin();
-			std::list<PmergeMe*>::iterator itend = main.end();
-			std::ostringstream ilv;
-			ilv << level[l];
-			//std::cout <<  ilv.str() << std::endl;
-			std::string n = ("b" + ilv.str());
-			if((*pet)->label == n)
+			std::cout << "Out.label " << (*out)->lbl << std::endl;
+			if((*out)->lbl == x)
+				get_out = 1;
+			out++;
+			if(out == outend && get_out == 0)
+				return(final_jacob(main, pend, npairs));
+		}
+		while(pet != petend && x > level[i - 1])
+		{
+			if((*pet)->lbl == x)
 			{
-				//std::cout << n << std::endl;
-				std::cout << (*pet)->label << std::endl;
+				std::cout << (*pet)->lbl << std::endl;
 				while(it != itend)
 				{
 					if((*it)->array[npairs - 1] > (*pet)->array[npairs - 1])
 					{
-						
-						main.insert(it, (*pet));//// supuesta mente encontrado activar flag, si no recudir l y seguir
-						pend.erase(pet);/// eliminamos la posicion una vez encontrada
-						l--; 
+						main.insert(it, (*pet));
+						pend.erase(pet);
+						x--;
 						pet = pend.begin();
 						petend = pend.end();
-						//ilv << level[l];
+						it = main.begin();
+						itend = main.end();
 						flag = 1;
-						//std::cout << (*pet)->label <<  ("b" + ilv.str()) << std::endl;
-						break;	
-						
+						break ;
 					}
 					it++;
+					if(it == itend && flag == 0)
+					{
+						main.push_back((*pet));
+						break;
+					}
 				}
 			}
-			pet++;
-			if(pend.size() == 0)
-				return main;
-			if((pet == petend && pend.size() > 0) || flag == 1)
-			{
-				pet = pend.begin();
-				petend = pend.end();
-				l--;
-				/* std::cout << level[l] << std::endl;
-				std::cout << MORADO << "Main: ", print(main);
-				std::cout << MORADO << "Pend: ", print(pend); */
-			}
-			if(l <= 0)
-				break;
+			else
+				pet++;
 		}
-		l = lvl;
-		//std::cout << "holi "<< l << std::endl;
+		i++;
 	}
-	
 	return main;
 }
 
@@ -327,6 +353,7 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 	std::list<PmergeMe*>::iterator it = sequence.begin();
 	std::list<PmergeMe*>::iterator itend = sequence.end();
 	std::list<PmergeMe*>::iterator np;
+	
 	//// Añadimos los nodos que corresponde tanto a Main, Pend & Non-participating
 	while(it != itend && (*it)->size == (int)npairs)
 	{
@@ -348,13 +375,15 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 		main = jacobsthal_level(main, pend, npairs);   
 		//std::cout << AMARILLO <<"AFTER JACOBSTHAL_LEVEL " << std::endl, print(main);                                     
 	}
+	//std::cout << "SIZE MAIN: ----------> " << main.size() << std::endl;
+	//std::cout << "SIZE PEND: ----------> " << pend.size() << std::endl;
 	if(NP.size() > 0)
 	{
 		np = NP.begin();
 		main.push_back((*np));
 		return main;
 	}
-	
+	std::cout << ROJO << std::endl, print(main);
 	return main;
 }
 
@@ -370,30 +399,45 @@ int main(int argc, char **argv)
 	size_t npairs = 1;
 	size_t level = 1;
 	std::cout << AZUL << "Our original sequence: \n", print(sequence);
+	//sort(sequence, npairs), print(sequence);
 	while(sequence.size() >= npairs)
 	{
-		std::cout << MORADO << "Recursion level " << level << ": " << std::endl , print(sequence);
+		std::cout << MORADO << "Start " << level << ": " << std::endl , print(sequence);
 		std::cout << VERDE << "Sequence after sorting: \n";
 		sort(sequence, npairs), print(sequence);
 		npairs = 2 * npairs;
+		//std::cout << "npairs:" << npairs << std::endl;
 		std::list<PmergeMe*> newsq;
-
+		if(sequence.size() <= npairs / 2)
+		{
+			npairs = npairs / 2;
+			break;
+		}
 		newsq = fusion(sequence, npairs);
 		std::cout  << AZUL << "Fusion " << level++ << ": ", print(newsq);
 		sequence = newsq;
 	}
+	//sort(sequence, npairs), print(sequence);
 	std::list<PmergeMe*> jacobsq; ///Jacobsthal se viene
 	std::list<PmergeMe*> test;
 	//int flag = 0;	
 	/* if(flag == 1)
 			break;
 		flag++; */
-	while(npairs > 1)
+	while(npairs > 0)
 	{
+		//print(sequence);
 		label(sequence, npairs);
 		test = jacobsthal(sequence, npairs);
 		std::cout << VERDE << "Jacobsthal: " << std::endl, print(test);
 		npairs = npairs / 2;
+		//std::cout << "npairs:" << npairs << std::endl;
+		//std::cout << "N!AAAAAAAAAAAAAaa "<< npairs << std::endl;
+		if(npairs == 0)
+		{
+			std::cout << "Se termino??? "<< std::endl, print(test);
+			return 0;
+		}	
 		if(npairs > 0)
 			jacobsq = divide(test, npairs);
 		std::cout << AMARILLO << "Divide: " << std::endl, print(jacobsq);
