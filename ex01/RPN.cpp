@@ -6,14 +6,16 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 17:56:31 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/09 18:07:22 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/04/30 16:41:42 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RPN.hpp"
 
 RPN::RPN(){
+	this->type = "";
 }
+
 
 RPN::~RPN(){
 }

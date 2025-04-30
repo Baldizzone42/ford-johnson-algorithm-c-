@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include <vector>
+#include <deque>
 
 class RPN
 {
@@ -13,11 +13,10 @@ class RPN
 		~RPN();
 		RPN(const RPN &copy);
 		RPN &operator=(const RPN &other);
-		void polish_calculator();
-		std::vector<std::string>polish;
-		void calculate(std::vector<std::string>::iterator it, char c, int i);
+		//std::deque<RPN*> deque;
+		std::deque<std::string> deque;
+		std::string type;
 	private:
-
 
 };
 
