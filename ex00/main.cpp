@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 09:54:08 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/09 19:00:06 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/03 18:28:08 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ void BitcoinExchange::readcsv(BitcoinExchange &store)
 		std::string value = store.str.substr(dlt + 1, end - 1);
 		store.csv[date] = atof(value.c_str());
 	}
-	for (std::map<std::string, float>::iterator it = store.csv.begin(); it != store.csv.end(); ++it) {    
+	/* for (std::map<std::string, float>::iterator it = store.csv.begin(); it != store.csv.end(); ++it) {    
 		std::cout << "Fecha:" << it->first << ". Valor:" << it->second  << "."<< std::endl;
-	}
+	} */
 }
 int parse_date(std::string line)
 {
