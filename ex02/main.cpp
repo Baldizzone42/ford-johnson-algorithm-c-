@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/06 16:51:52 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:20:06 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,33 @@ bool digit(char c)
 	return false;
 }
 
+void free_lst(std::list<PmergeMe*>lst)
+{
+	std::list<PmergeMe*>::iterator it = lst.begin();
+	std::list<PmergeMe*>::iterator itend = lst.end();
+	while(it != itend)
+	{
+		delete ((*it));
+		it = lst.erase(it);
+	}
+	lst.clear();
+}
+
 int check_sintax(std::list<PmergeMe*>lst, char **argv)
 {
-	if(lst.size() == 0 || lst.size() > 3000)
-		return (std::cout <<"Non-orderable number size.\n"), 1;
-		
+	if(lst.size() == 1 || lst.size() > 3000)
+		return (std::cout <<"Non-orderable number size.\n"), free_lst(lst),  1;	
 	size_t i = 	1;
 	while(argv[i])
 	{
 		int j = 0;
+		long maxint = std::atol(argv[i]);
+		if(maxint > INTMAX)
+			return (std::cout <<"Number too big.\n"), free_lst(lst),  1; 
 		while(argv[i][j])
 		{
 			if(digit(argv[i][j]) == false)
-				return (std::cout << "Error: Non-numeric character found"), 1;
+				return (std::cout << "Error: Non-numeric character found\n"), free_lst(lst), 1;
 			j++;
 		}
 		i++;
@@ -54,28 +68,13 @@ int check_duplicate(std::list<PmergeMe*>lst)
 		while(itsecond != itend)
 		{
 			if((*it)->array[0] == (*itsecond)->array[0])
-				return (std::cout << "Error: repeated number\n"), 1;
+				return (std::cout << "Error: repeated number\n"), free_lst(lst), 1;
 			itsecond++;
 		}
 		it++;
 	}
 	return 0;
 }
-
-
-void free_lst(std::list<PmergeMe*>lst)
-{
-	std::list<PmergeMe*>::iterator it = lst.begin();
-	std::list<PmergeMe*>::iterator itend = lst.end();
-	while(it != itend)
-	{
-		//delete [](*it)->array;
-		delete ((*it));
-		it = lst.erase(it);
-	}
-	lst.clear();
-}
-
 
 void print(std::list<PmergeMe*>lst)
 {
@@ -88,15 +87,13 @@ void print(std::list<PmergeMe*>lst)
 		int i = 0;
 		while(i < (*it)->size)
 		{
-			std::cout << (*it)->array[i] << ".";
+			std::cout << (*it)->array[i];
 			i++;
 		}
-		//std::cout << VERDE << (*it)->label << " ";
-		std::cout << " // ";
+		std::cout << " ";
 		it++;
 	}
-	std::cout << std::endl << std::endl;
-	std::cout << std::endl << std::endl;
+	std::cout << std::endl;
 }
 
 void sort(std::list<PmergeMe*> sequence, size_t npairs)
@@ -121,7 +118,6 @@ void sort(std::list<PmergeMe*> sequence, size_t npairs)
 		itsecond++;
 	}
 }
-
 
 int* fusion_array(PmergeMe *a, PmergeMe *b, size_t npairs)
 {
@@ -162,24 +158,20 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 			delete []temp->array;
 			temp->array = arrayy;
 			result.push_back(temp);
-			
 			delete (*it);
             delete (*itsecond);
-            
             it = ++itsecond;
             if(it == itend) break;
 		}
 		else if(itsecond != itend)
 		{
 			int *arrayy = fusion_array((*it), (*itsecond), npairs);
-			//std::cout << ROJO << npairs << std::endl;
 			PmergeMe *temp = new PmergeMe((int)((*it)->size  + (*itsecond)->size));
 			delete []temp->array;
 			temp->array = arrayy;
 			result.push_back(temp);
 			delete (*it);
-            delete (*itsecond);
-            
+            delete (*itsecond); 
             it = ++itsecond;
             if(it == itend) 
 				break;
@@ -194,7 +186,6 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 	}
 	return result;
 }
-
 
 void label(std::list<PmergeMe*>sequence, size_t npairs)
 {
@@ -226,15 +217,7 @@ void label(std::list<PmergeMe*>sequence, size_t npairs)
 		it++;
 		i++;
 	}
-/* 	std::list<PmergeMe*>::iterator itt = sequence.begin();
-	std::list<PmergeMe*>::iterator ittend = sequence.end();
-	while(itt != ittend)
-	{
-		std::cout << (*itt)->label << std::endl;
-		itt++;
-	} */
 }
-
 
 PmergeMe** divide_node(PmergeMe* node, size_t npairs)
 {
@@ -256,7 +239,6 @@ PmergeMe** divide_node(PmergeMe* node, size_t npairs)
 		c++;
 	}
 	result[1]->size = (node->size - npairs);
-	
 	return result;
 }
 
@@ -266,19 +248,12 @@ std::list<PmergeMe*>divide(std::list<PmergeMe*>sequence, size_t npairs)
 	std::list<PmergeMe*>::iterator it = sequence.begin();
 	std::list<PmergeMe*>::iterator itend = sequence.end();
 	std::list<PmergeMe*> result;
-	
-	//int i = 1;
-	/* std::cout << VERDE << "ANTES: " << std::endl;
-	print(sequence); */
 	while(it != itend)
 	{
-		//std::cout << i++ << std::endl;
 		if((*it)->size > (int)npairs)
 		{
 			PmergeMe **temp;
-			//std::cout <<  ROJO << (*it)->array << std::endl;
 			temp = divide_node((*it), npairs);
-			//std::cout << MORADO << temp[0]->array[0] << " " << temp[1]->array[0] << std::endl;
 			result.push_back(new PmergeMe(temp[0]));
 			result.push_back(new PmergeMe(temp[1]));
 			delete temp[0], delete temp[1];
@@ -289,8 +264,6 @@ std::list<PmergeMe*>divide(std::list<PmergeMe*>sequence, size_t npairs)
 			result.push_back((*it));
 		it++;	
 	}
-	/* std::cout << VERDE << "DESPUES: " << std::endl;
-	print(result); */
 	return result;
 }
 
@@ -300,19 +273,13 @@ std::list<PmergeMe*> final_jacob(std::list<PmergeMe*> main, std::list<PmergeMe*>
 	while(pend.size() > 0)
 	{	
 		std::list<PmergeMe*>::iterator rev = pend.end();
-		//std::cout << VERDE; print(pend);
 		rev--;
-		//std::cout << MORADO <<(*rev)->array[0] << std::endl;
-		//std::cout << "hola" << std::endl;
-		//std::cout << AMARILLO; print(main);
 		std::list<PmergeMe*>::iterator it = main.begin();
 		std::list<PmergeMe*>::iterator itend = main.end();
 		while(it != itend)
 		{
-			//std::cout << "Npairs ----------------> " << npairs << std::endl;
 			if((*it)->array[npairs - 1] > (*rev)->array[npairs - 1])
 			{
-			//	std::cout << "ruina" << std::endl;
 				PmergeMe *temp = new PmergeMe((*rev));
 				main.insert(it, temp);
 				delete (*rev);
@@ -327,8 +294,6 @@ std::list<PmergeMe*> final_jacob(std::list<PmergeMe*> main, std::list<PmergeMe*>
 				PmergeMe *temp = new PmergeMe((*rev));
 				main.push_back(temp);
 				delete (*rev);
-				//pend.erase(rev);
-				//free_lst(pend);
 				return main;
 			}
 		}	
@@ -348,7 +313,6 @@ std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<Pmerge
 	int i = 1;
 	int flag = 0;
 	int get_out = 0;
-	
 	while(pend.size() > 0)
 	{
 		std::list<PmergeMe*>::iterator out = pend.begin();
@@ -356,15 +320,11 @@ std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<Pmerge
 		x = level[i];
 		flag = 0;
 		get_out = 0;
-		std::cout << ROJO << "jacbobsss level" << std::endl;
+
 		while(out != outend)
 		{ 
-			//std::cout << (*out)->lbl << "-" <<x << std::endl; 
 			if((*out)->lbl == x)
-			{
-				//std::cout <<  "encontro b3 :))))))))))))))))))))))))))" << std::endl;
 				get_out = 1;
-			}
 			out++;
 			if(out == outend && get_out == 0)
 				return(final_jacob(main, pend, npairs));
@@ -373,9 +333,6 @@ std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<Pmerge
 		{
 			if((*pet)->lbl == x)
 			{
-				//print(main);
-				//print(pend);
-				//std::cout << (*pet)->lbl << std::endl;
 				while(it != itend)
 				{
 					if((*it)->array[npairs - 1] > (*pet)->array[npairs - 1])
@@ -413,8 +370,7 @@ std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<Pmerge
 	free_lst(pend);
 	return main;
 }
-
-		
+	
 std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 {
 	std::list<PmergeMe*> main;
@@ -423,46 +379,27 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 	std::list<PmergeMe*>::iterator it = sequence.begin();
 	std::list<PmergeMe*>::iterator itend = sequence.end();
 	std::list<PmergeMe*>::iterator np;
-	
-	//// Añadimos los nodos que corresponde tanto a Main, Pend & Non-participating
-	//std::cout << "SIZE SEQUENCE: " << sequence.size() << std::endl;
-	//print(sequence);
 	while(it != itend && (*it)->size == (int)npairs)
 	{
 		if((*it)->label == "b1" || (*it)->label[0] == 'a')
 		{
 			PmergeMe *temp = new PmergeMe((*it));
 			main.push_back(temp);
-			//delete (*it);
-			//it = sequence.erase(it);
 		}
 		else if((*it)->label[0] == 'b')
 		{
 			PmergeMe *temp = new PmergeMe((*it));
 			pend.push_back(temp);
-			//delete (*it);
-			//it = sequence.erase(it);
 		}
 		it++;
 	}
-	/* std::cout << VERDE << "pastora: " << std::endl;
-	print(sequence);
-	std::cout << AMARILLO << "Main: " << main.size() << std::endl;
-	print(main);
-	std::cout << AMARILLO << "Pend: " << pend.size() << std::endl;
-	print(pend); */
 	if(it != itend)
 	{
 		PmergeMe *temp = new PmergeMe((*it));
 		NP.push_back(temp);
 	}
-	std::cout << AMARILLO  << "NP: "<< NP.size() << std::endl; /* 
-	std::cout << AMARILLO << "Main: " << main.size() << std::endl;
-	std::cout << AMARILLO << "Pend: " << pend.size() << std::endl;
-	std::cout << AMARILLO  << "NP: "<< NP.size() << std::endl; */
 	if(pend.size() > 0)
-		main = jacobsthal_level(main, pend, npairs);     
-	                             
+		main = jacobsthal_level(main, pend, npairs);                             
 	if(NP.size() > 0)
 	{
 		np = NP.begin();
@@ -472,18 +409,15 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 			free_lst(pend);
 		free_lst(NP);
 	}
-	print(main);
 	free_lst(sequence);
 	return main;
 }
-
 
 void is_sorted(std::list<PmergeMe*>sequence)
 {
 	std::list<PmergeMe*>::iterator it = sequence.begin();
 	std::list<PmergeMe*>::iterator itend = sequence.end();
 	std::list<PmergeMe*>::iterator itsecond;
-	
 	while(it != itend)
 	{ 
 		if(sequence.size() == 1)
@@ -494,17 +428,13 @@ void is_sorted(std::list<PmergeMe*>sequence)
 		while(itsecond != itend)
 		{
 			if((*it)->array[0] >= (*itsecond)->array[0])
-			{
-				std::cout << ROJO << "Not sorted" << std::endl;
-				exit(1);
-			}
+				return ;
 			itsecond++;
 		}
 		it++;
 	}
-	std::cout << AMARILLO << "It is ordered" << std::endl;
+	std::cout << Y << "After:  ";
 }
-
 
 int check_fusion_sizes(std::list<PmergeMe*>sequence)
 {
@@ -525,6 +455,7 @@ int check_fusion_sizes(std::list<PmergeMe*>sequence)
 	return 1;
 }
 
+
 int main(int argc, char **argv)
 {
 	if(argc == 1 || argv[1][0] == '\0')
@@ -534,10 +465,9 @@ int main(int argc, char **argv)
 	if(check_duplicate(sequence) || check_sintax(sequence, argv))
 		return 1;
 	size_t npairs = 1;
-	//size_t level = 1;
-	std::cout << AZUL << "Our original sequence: \n";
-	print(sequence);
 	size_t sqinitial = sequence.size();
+	std::cout << B << "Before: "; print(sequence);
+	std::clock_t start = std::clock();
 	while((sqinitial / 2 ) > npairs)
 	{
 		sort(sequence, npairs);
@@ -553,29 +483,23 @@ int main(int argc, char **argv)
 	sort(sequence, npairs);
 	while(npairs > 0)
 	{
-		/* std::cout << "ANTES: " << std::endl;
-		print(sequence); */
 		label(sequence, npairs);
 		sequence = jacobsthal(sequence, npairs);
-		
 		npairs = npairs / 2;
 		if(npairs == 0)
 		{
-			std::cout << VERDE << sequence.size() << std::endl;
 			is_sorted(sequence);
+			std::clock_t end = std::clock();
+			double time = static_cast<double>(end - start) / CLOCKS_PER_SEC;
 			print(sequence);
+			std::cout << Y <<"\nTime to process a range of " << sequence.size() << " elements with std::[..] : ";
+			std::cout << time  << " us" << std::endl;
 			free_lst(sequence);	
 			return 0;
 		}	
-		if(npairs > 0)
+		if(npairs > 0) 
 			sequence = divide(sequence, npairs);
-		//std::cout << AMARILLO << "Divide: " << std::endl, print(sequence);
-		//std::cout << MORADO << "SECUENCE SORT! " << std::endl, print(sequence);
-		//std::cout << MORADO << "Pend: ", print(pend);
-		//std::cout << MORADO << "Non-P: ", print(NP);
-		//std::cout << "-------------------------" << std::endl;
 	}
-	std::cout << sequence.size() << std::endl;
 	free_lst(sequence);
 	return 0;
 }
