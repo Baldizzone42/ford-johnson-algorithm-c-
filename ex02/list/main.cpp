@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/03 22:47:04 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/06 12:12:16 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,9 @@ void free_lst(std::list<PmergeMe*>lst)
 	std::list<PmergeMe*>::iterator itend = lst.end();
 	while(it != itend)
 	{
-		//delete []((*it)->array); // double free and segfault
-		delete((*it));
+		//delete [](*it)->array;
+		delete ((*it));
 		it = lst.erase(it);
-		
 	}
 	lst.clear();
 }
@@ -159,27 +158,41 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 			std::cout << ROJO << npairs << std::endl;
 			int *arrayy = fusion_array((*it), (*itsecond), npairs);
 			PmergeMe *temp = new PmergeMe(npairs);
+			delete []temp->array;
 			temp->array = arrayy;
 			result.push_back(temp);
-			it++;
+			
+			delete (*it);
+            delete (*itsecond);
+            
+            // Avanzar el iterador correctamente (saltamos dos elementos)
+            it = ++itsecond;
+            if(it == itend) break;
 		}
 		else if(itsecond != itend)
 		{
 			int *arrayy = fusion_array((*it), (*itsecond), npairs);
 			//std::cout << ROJO << npairs << std::endl;
 			PmergeMe *temp = new PmergeMe((int)((*it)->size  + (*itsecond)->size));
+			delete []temp->array;
 			temp->array = arrayy;
 			result.push_back(temp);
-			it++;
+			delete (*it);
+            delete (*itsecond);
+            
+            // Avanzar el iterador correctamente (saltamos dos elementos)
+            it = ++itsecond;
+            if(it == itend) 
+				break;
 		}
 		else if(itsecond == itend)
 		{
 			PmergeMe *temp = new PmergeMe((*it));
 			result.push_back(temp);
+			delete(*it);
+			it++;
 		}
-		++it;
 	}
-	free_lst(sequence);
 	return result;
 }
 
@@ -267,6 +280,7 @@ std::list<PmergeMe*>divide(std::list<PmergeMe*>sequence, size_t npairs)
 			result.push_back(new PmergeMe(temp[1]));
 			delete temp[0], delete temp[1];
 			delete []temp;
+			delete (*it);
 		}
 		else
 			result.push_back((*it));
@@ -297,6 +311,7 @@ std::list<PmergeMe*> final_jacob(std::list<PmergeMe*> main, std::list<PmergeMe*>
 			//	std::cout << "ruina" << std::endl;
 				PmergeMe *temp = new PmergeMe((*rev));
 				main.insert(it, temp);
+				delete (*rev);
 				pend.erase(rev);
 				it = main.begin();
 				itend = main.end();
@@ -307,7 +322,9 @@ std::list<PmergeMe*> final_jacob(std::list<PmergeMe*> main, std::list<PmergeMe*>
 			{
 				PmergeMe *temp = new PmergeMe((*rev));
 				main.push_back(temp);
-				free_lst(pend);
+				delete (*rev);
+				//pend.erase(rev);
+				//free_lst(pend);
 				return main;
 			}
 		}	
@@ -358,6 +375,7 @@ std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<Pmerge
 					{
 						PmergeMe *temp = new PmergeMe((*pet));
 						main.insert(it, temp);
+						delete ((*pet));
 						pend.erase(pet);
 						x--;
 						pet = pend.begin();
@@ -372,6 +390,7 @@ std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<Pmerge
 					{
 						PmergeMe *temp = new PmergeMe((*pet));
 						main.push_back(temp);
+						delete ((*pet));
 						pend.erase(pet);
 						pet = pend.begin();
 						petend = pend.end();
@@ -405,28 +424,35 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 		{
 			PmergeMe *temp = new PmergeMe((*it));
 			main.push_back(temp);
+			//delete (*it);
+			//it = sequence.erase(it);
 		}
 		else if((*it)->label[0] == 'b')
 		{
 			PmergeMe *temp = new PmergeMe((*it));
-			pend.push_back(temp);	
+			pend.push_back(temp);
+			//delete (*it);
+			//it = sequence.erase(it);
 		}
 		it++;
 	}
-	std::cout << "mainsize: " << main.size() << " pensize: " << pend.size() << " npsize: " << NP.size() << std::endl;
 	if(it != itend)
 	{
 		PmergeMe *temp = new PmergeMe((*it));
+		//delete (*it);
+		//it = sequence.erase(it);
 		NP.push_back(temp);
 	}
+	//free_lst(sequence);
 	if(pend.size() > 0)
 	{
 		/* std::cout << "entra: jacobsthal_level  " << pend.size() << std::endl; 
 		std::cout << MORADO << "Main: ", print(main);
 		std::cout << MORADO << "Pend: ", print(pend);
-		std::cout << MORADO << "Non-P: ", print(NP);
-		std::cout << "-------------------------" << std::endl; */
-		main = jacobsthal_level(main, pend, npairs);   
+		std::cout << MORADO << "Non-P: ", print(NP);*/
+		
+		main = jacobsthal_level(main, pend, npairs);
+		//free_lst(pend);
 		//std::cout << AMARILLO <<"AFTER JACOBSTHAL_LEVEL " << std::endl, print(main);                                     
 	}
 	//std::cout << "SIZE MAIN: ----------> " << main.size() << std::endl;
@@ -438,11 +464,11 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 		main.push_back(temp);
 		if(pend.empty())
 			free_lst(pend);
-		free_lst(sequence),free_lst(NP);
+		free_lst(sequence);
+		free_lst(NP);
 		return main;
 	}
-	free_lst(sequence),free_lst(pend),free_lst(NP);
-	//std::cout << ROJO << std::endl, print(main);
+	free_lst(sequence);
 	return main;
 }
 
@@ -554,8 +580,10 @@ int main(int argc, char **argv)
 		if(npairs == 0)
 		{
 			is_sorted(sequence);
+			//std::cout <<MORADO << "-------------------------" << std::endl; 
 			print(sequence);
-			free_lst(sequence);
+			std::cout << VERDE << sequence.size() << std::endl;
+			free_lst(sequence);	
 			return 0;
 		}	
 		if(npairs > 0)
@@ -568,5 +596,6 @@ int main(int argc, char **argv)
 		//print(sequence);
 	}
 	free_lst(sequence);
+
 	return 0;
 }

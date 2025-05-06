@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 12:40:00 by jormoral          #+#    #+#             */
-/*   Updated: 2025/04/30 12:45:10 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:33:00 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ std::vector<PmergeMe* >fusion(std::vector<PmergeMe*>sequence, size_t npairs)
 		}
 		else if(itsecond == itend)
 		{
-			PmergeMe *temp = new PmergeMe((*it));
+			PmergeMe *temp = ;
 			result.push_back(temp);
 		}
 		++it;
@@ -271,6 +271,7 @@ std::vector<PmergeMe*> final_jacob(std::vector<PmergeMe*> main, std::vector<Pmer
 			{
 			//	std::cout << "ruina" << std::endl;
 				main.insert(it, (*rev));
+				delete (*rev);
 				pend.erase(rev);
 				it = main.begin();
 				itend = main.end();
@@ -329,6 +330,7 @@ std::vector<PmergeMe*>jacobsthal_level(std::vector<PmergeMe*> main, std::vector<
 					if((*it)->array[npairs - 1] > (*pet)->array[npairs - 1])
 					{
 						main.insert(it, (*pet));
+						delete (*pet);
 						pend.erase(pet);
 						x--;
 						pet = pend.begin();
@@ -342,6 +344,7 @@ std::vector<PmergeMe*>jacobsthal_level(std::vector<PmergeMe*> main, std::vector<
 					if(it == itend && flag == 0)
 					{
 						main.push_back((*pet));
+						delete (*pet);
 						pend.erase(pet);
 						pet = pend.begin();
 						petend = pend.end();
