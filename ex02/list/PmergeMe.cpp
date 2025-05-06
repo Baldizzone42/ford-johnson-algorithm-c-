@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 19:31:19 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/05 15:31:27 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:28:15 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ PmergeMe::PmergeMe(){
 	this->size = 1;
 	this->array =  new int[1];
 	this->label = "";
+	this->lbl = 0;
 	
 }
 
@@ -23,6 +24,7 @@ PmergeMe::PmergeMe(size_t n){
 	this->size = n;
 	this->array =  new int[n];
 	this->label = "";
+	this->lbl = 0;
 	
 }
 
@@ -37,6 +39,7 @@ PmergeMe::PmergeMe(PmergeMe *copy){
 	for(int i = 0; i < this->size; i++)
 		this->array[i] = copy->array[i];
 	this->label = copy->label;
+	this->lbl = copy->lbl;
 }
 
 
@@ -52,6 +55,7 @@ PmergeMe::PmergeMe(const PmergeMe &copy){
 	for(int i = 0; i < this->size; i++)
 		this->array[i] = copy.array[i];
 	this->label = copy.label;
+	this->lbl = copy.lbl;
 }
 
 std::list<PmergeMe*> PmergeMe::init(char **argv)

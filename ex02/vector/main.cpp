@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 12:40:00 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/05 14:33:00 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/06 14:27:24 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,11 +384,11 @@ std::vector<PmergeMe*> jacobsthal(std::vector<PmergeMe*> sequence, size_t npairs
 		NP.push_back((*it));
 	if(pend.size() > 0)
 	{
-		std::cout << "entra: jacobsthal_level  " << pend.size() << std::endl; 
+		/* std::cout << "entra: jacobsthal_level  " << pend.size() << std::endl; 
 		std::cout << MORADO << "Main: ", print(main);
 		std::cout << MORADO << "Pend: ", print(pend);
 		std::cout << MORADO << "Non-P: ", print(NP);
-		std::cout << "-------------------------" << std::endl;
+		std::cout << "-------------------------" << std::endl; */
 		main = jacobsthal_level(main, pend, npairs);   
 		//std::cout << AMARILLO <<"AFTER JACOBSTHAL_LEVEL " << std::endl, print(main);                                     
 	}
@@ -483,7 +483,7 @@ int main(int argc, char **argv)
 		}	
 		if(npairs > 0)
 			jacobsq = divide(test, npairs);
-		std::cout << AMARILLO << "Divide: " << std::endl, print(jacobsq);
+		//std::cout << AMARILLO << "Divide: " << std::endl, print(jacobsq);
 		sequence = jacobsq;
 		std::cout << MORADO << "SECUENCE SORT! " << std::endl, print(sequence);
 		/*std::cout << MORADO << "Pend: ", print(pend);

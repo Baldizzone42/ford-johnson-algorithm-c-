@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/06 12:12:16 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/06 16:51:52 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,11 @@ void print(std::list<PmergeMe*>lst)
 			std::cout << (*it)->array[i] << ".";
 			i++;
 		}
+		//std::cout << VERDE << (*it)->label << " ";
 		std::cout << " // ";
 		it++;
 	}
+	std::cout << std::endl << std::endl;
 	std::cout << std::endl << std::endl;
 }
 
@@ -155,7 +157,6 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 		itsecond++;
 		if(itsecond != itend && (*it)->size == (*itsecond)->size)
 		{
-			std::cout << ROJO << npairs << std::endl;
 			int *arrayy = fusion_array((*it), (*itsecond), npairs);
 			PmergeMe *temp = new PmergeMe(npairs);
 			delete []temp->array;
@@ -165,7 +166,6 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 			delete (*it);
             delete (*itsecond);
             
-            // Avanzar el iterador correctamente (saltamos dos elementos)
             it = ++itsecond;
             if(it == itend) break;
 		}
@@ -180,7 +180,6 @@ std::list<PmergeMe* >fusion(std::list<PmergeMe*>sequence, size_t npairs)
 			delete (*it);
             delete (*itsecond);
             
-            // Avanzar el iterador correctamente (saltamos dos elementos)
             it = ++itsecond;
             if(it == itend) 
 				break;
@@ -269,13 +268,17 @@ std::list<PmergeMe*>divide(std::list<PmergeMe*>sequence, size_t npairs)
 	std::list<PmergeMe*> result;
 	
 	//int i = 1;
+	/* std::cout << VERDE << "ANTES: " << std::endl;
+	print(sequence); */
 	while(it != itend)
 	{
 		//std::cout << i++ << std::endl;
 		if((*it)->size > (int)npairs)
 		{
 			PmergeMe **temp;
+			//std::cout <<  ROJO << (*it)->array << std::endl;
 			temp = divide_node((*it), npairs);
+			//std::cout << MORADO << temp[0]->array[0] << " " << temp[1]->array[0] << std::endl;
 			result.push_back(new PmergeMe(temp[0]));
 			result.push_back(new PmergeMe(temp[1]));
 			delete temp[0], delete temp[1];
@@ -286,7 +289,8 @@ std::list<PmergeMe*>divide(std::list<PmergeMe*>sequence, size_t npairs)
 			result.push_back((*it));
 		it++;	
 	}
-	//free_lst(sequence);
+	/* std::cout << VERDE << "DESPUES: " << std::endl;
+	print(result); */
 	return result;
 }
 
@@ -352,12 +356,15 @@ std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<Pmerge
 		x = level[i];
 		flag = 0;
 		get_out = 0;
-		//std::cout << "X:---------------------> " << x  << " Out.label " << (*out)->lbl << std::endl;
+		std::cout << ROJO << "jacbobsss level" << std::endl;
 		while(out != outend)
 		{ 
-			//std::cout << "Out.label " << (*out)->lbl << std::endl;
+			//std::cout << (*out)->lbl << "-" <<x << std::endl; 
 			if((*out)->lbl == x)
+			{
+				//std::cout <<  "encontro b3 :))))))))))))))))))))))))))" << std::endl;
 				get_out = 1;
+			}
 			out++;
 			if(out == outend && get_out == 0)
 				return(final_jacob(main, pend, npairs));
@@ -368,7 +375,7 @@ std::list<PmergeMe*>jacobsthal_level(std::list<PmergeMe*> main, std::list<Pmerge
 			{
 				//print(main);
 				//print(pend);
-				std::cout << (*pet)->lbl << std::endl;
+				//std::cout << (*pet)->lbl << std::endl;
 				while(it != itend)
 				{
 					if((*it)->array[npairs - 1] > (*pet)->array[npairs - 1])
@@ -418,6 +425,8 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 	std::list<PmergeMe*>::iterator np;
 	
 	//// Añadimos los nodos que corresponde tanto a Main, Pend & Non-participating
+	//std::cout << "SIZE SEQUENCE: " << sequence.size() << std::endl;
+	//print(sequence);
 	while(it != itend && (*it)->size == (int)npairs)
 	{
 		if((*it)->label == "b1" || (*it)->label[0] == 'a')
@@ -436,27 +445,24 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 		}
 		it++;
 	}
+	/* std::cout << VERDE << "pastora: " << std::endl;
+	print(sequence);
+	std::cout << AMARILLO << "Main: " << main.size() << std::endl;
+	print(main);
+	std::cout << AMARILLO << "Pend: " << pend.size() << std::endl;
+	print(pend); */
 	if(it != itend)
 	{
 		PmergeMe *temp = new PmergeMe((*it));
-		//delete (*it);
-		//it = sequence.erase(it);
 		NP.push_back(temp);
 	}
-	//free_lst(sequence);
+	std::cout << AMARILLO  << "NP: "<< NP.size() << std::endl; /* 
+	std::cout << AMARILLO << "Main: " << main.size() << std::endl;
+	std::cout << AMARILLO << "Pend: " << pend.size() << std::endl;
+	std::cout << AMARILLO  << "NP: "<< NP.size() << std::endl; */
 	if(pend.size() > 0)
-	{
-		/* std::cout << "entra: jacobsthal_level  " << pend.size() << std::endl; 
-		std::cout << MORADO << "Main: ", print(main);
-		std::cout << MORADO << "Pend: ", print(pend);
-		std::cout << MORADO << "Non-P: ", print(NP);*/
-		
-		main = jacobsthal_level(main, pend, npairs);
-		//free_lst(pend);
-		//std::cout << AMARILLO <<"AFTER JACOBSTHAL_LEVEL " << std::endl, print(main);                                     
-	}
-	//std::cout << "SIZE MAIN: ----------> " << main.size() << std::endl;
-	//std::cout << "SIZE PEND: ----------> " << pend.size() << std::endl;
+		main = jacobsthal_level(main, pend, npairs);     
+	                             
 	if(NP.size() > 0)
 	{
 		np = NP.begin();
@@ -464,10 +470,9 @@ std::list<PmergeMe*> jacobsthal(std::list<PmergeMe*> sequence, size_t npairs)
 		main.push_back(temp);
 		if(pend.empty())
 			free_lst(pend);
-		free_lst(sequence);
 		free_lst(NP);
-		return main;
 	}
+	print(main);
 	free_lst(sequence);
 	return main;
 }
@@ -520,8 +525,6 @@ int check_fusion_sizes(std::list<PmergeMe*>sequence)
 	return 1;
 }
 
-
-
 int main(int argc, char **argv)
 {
 	if(argc == 1 || argv[1][0] == '\0')
@@ -537,52 +540,30 @@ int main(int argc, char **argv)
 	size_t sqinitial = sequence.size();
 	while((sqinitial / 2 ) > npairs)
 	{
-		/* std::cout << MORADO << "Start " << level << ": " << std::endl , print(sequence);
-		std::cout << VERDE << "Sequence after sorting: \n"; */
-	//	std::cout << VERDE << "0 Sequence size: "<<  sequence.size() << std::endl;
-		//std::cout << ROJO << "0 Npairs: "<<  npairs << std::endl;
-		sort(sequence, npairs);// print(sequence);
-		
+		sort(sequence, npairs);
 		if(sequence.size() >= 4)
 		{
 			npairs = 2 * npairs;
-			//std::cout << VERDE << "0.5 Sequence size: "<<  sequence.size() << std::endl;
-			//std::cout << ROJO << "0.5 Npairs: "<<  npairs << std::endl;
-
 			if(check_fusion_sizes(sequence))
 				sequence = fusion(sequence, npairs);
 		}
 		else
 			break ;
-		//std::cout  << AZUL << "Fusion " << level++ << ": ", print(sequence);
-		
 	}
-	//std::cout << VERDE << "1 Sequence size: "<<  sequence.size() << std::endl;
-	//std::cout << ROJO << "1 Npairs: "<<  npairs << std::endl;
 	sort(sequence, npairs);
-	//std::cout << CIAN << "After last sort \n"; print(sequence);
-/* 	std::list<PmergeMe*> jacobsq; ///Jacobsthal se viene
-	std::list<PmergeMe*> test; */
 	while(npairs > 0)
 	{
-		//print(sequence);
-		std::cout << VERDE << "2 Sequence size: "<<  sequence.size() << std::endl;
-		std::cout << ROJO << "2 Npairs: "<<  npairs << std::endl;
+		/* std::cout << "ANTES: " << std::endl;
+		print(sequence); */
 		label(sequence, npairs);
 		sequence = jacobsthal(sequence, npairs);
-		//std::cout << VERDE << "Jacobsthal: " << std::endl;
-		//std::cout << ROJO << "3Npairs: "<<  npairs << std::endl;
-
-		//print(sequence);
+		
 		npairs = npairs / 2;
-		//std::cout << "npairs:" << npairs << std::endl;
-		//std::cout << "N!AAAAAAAAAAAAAaa "<< npairs << std::endl;
 		if(npairs == 0)
 		{
-			is_sorted(sequence);
-			//std::cout <<MORADO << "-------------------------" << std::endl; 
-			print(sequence);
 			std::cout << VERDE << sequence.size() << std::endl;
+			is_sorted(sequence);
+			print(sequence);
 			free_lst(sequence);	
 			return 0;
 		}	
@@ -593,9 +574,8 @@ int main(int argc, char **argv)
 		//std::cout << MORADO << "Pend: ", print(pend);
 		//std::cout << MORADO << "Non-P: ", print(NP);
 		//std::cout << "-------------------------" << std::endl;
-		//print(sequence);
 	}
+	std::cout << sequence.size() << std::endl;
 	free_lst(sequence);
-
 	return 0;
 }
