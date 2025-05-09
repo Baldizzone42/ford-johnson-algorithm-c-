@@ -19,6 +19,11 @@ class RPN
 		//std::deque<RPN*> deque;
 		std::deque<std::string> deque;
 		std::deque<int> n;
+	class zero_divide : public std::exception
+	{
+		public:
+			const char* what() const throw();
+	};
 	private:
 
 };

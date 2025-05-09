@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 17:54:57 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/06 18:10:50 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/09 20:21:30 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <unistd.h>
 
 #define INTMAX 2147483647 
 

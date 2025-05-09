@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 17:54:56 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/01 20:48:22 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/09 19:28:42 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,10 @@ void print_dequeint(RPN *main)
 	std::cout << std::endl;
 }
 
+const char *RPN::zero_divide::what() const throw()
+{
+	return "Good try bro\n";
+}
 
 int operate(RPN *main, char c)
 {
@@ -142,7 +146,12 @@ int operate(RPN *main, char c)
 	if(c == '+')
 		return (main->n[1] + main->n[0]);
 	if(c == '/')
-		return (main->n[1] / main->n[0]);
+	{
+		if(main->n[0] != 0)
+			return (main->n[1] / main->n[0]);
+		else
+			throw(RPN::zero_divide());
+	}
 	if(c == '*')
 		return (main->n[1] * main->n[0]);
 	return 0;
@@ -191,6 +200,13 @@ int main(int argc, char **argv)
 	if(!checkn(main) || !check_rown(main) || main->deque.size() <= 2 )
 		return(1);
 	print_dequestd(main);
-	polish_calculator(main);
+	try
+	{
+		polish_calculator(main);
+	}
+	catch(std::exception & e)
+	{
+		std::cerr << e.what();
+	}
 	return 0;
 }
