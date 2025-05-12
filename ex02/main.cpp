@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/09 20:34:45 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/12 17:13:36 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,7 @@ void label(T sequence, size_t npairs)
 			a++;
 		}
 		else
-			(*it)->label = "Non-participating"; 
+			(*it)->label = "Non-participating";
 		it++;
 		i++;
 	}
@@ -299,6 +299,8 @@ T divide(T sequence, size_t npairs)
 template <class T>
 T final_jacob(T main, T pend , size_t npairs)
 {
+	/* std::cout << "1Main_size: " << main.size() << std::endl;
+	std::cout << "1Pend_size: " << pend.size() << std::endl; */
 	while(pend.size() > 0)
 	{	
 		typename T::iterator rev = pend.end();
@@ -323,10 +325,15 @@ T final_jacob(T main, T pend , size_t npairs)
 				PmergeMe *temp = new PmergeMe((*rev));
 				main.push_back(temp);
 				delete (*rev);
-				return main;
+				pend.erase(rev);
+				it = main.begin();
+				itend = main.end();
+				break ;
 			}
 		}	
-	}
+	} 
+	/* std::cout << "2Main_size: " << main.size() << std::endl;
+	std::cout << "2Pend_size: " << pend.size() << std::endl; */
 	free_container(pend);
 	return main;
 }
@@ -343,6 +350,7 @@ T jacobsthal_level(T main, T pend, size_t npairs)
 	int i = 1;
 	int flag = 0;
 	int get_out = 0;
+	
 	while(pend.size() > 0)
 	{
 		typename T::iterator out = pend.begin();
@@ -430,7 +438,7 @@ T jacobsthal(T sequence, size_t npairs)
 		NP.push_back(temp);
 	}
 	if(pend.size() > 0)
-		main = jacobsthal_level(main, pend, npairs);                             
+		main = jacobsthal_level(main, pend, npairs);                            
 	if(NP.size() > 0)
 	{
 		np = NP.begin();
