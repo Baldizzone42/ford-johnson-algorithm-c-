@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 17:54:56 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/09 19:28:42 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:10:03 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ int check_number(const char *s)
 		if(s[i] >= '0' && s[i] <= '9')
 			i++;
 		else
+			return 0;
+		if(s[i])
 			return 0;
 	}
 	return 1;

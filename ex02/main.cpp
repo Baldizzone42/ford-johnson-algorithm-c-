@@ -6,7 +6,7 @@
 /*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 09:06:32 by jormoral          #+#    #+#             */
-/*   Updated: 2025/05/12 17:13:36 by jormoral         ###   ########.fr       */
+/*   Updated: 2025/05/27 15:51:08 by jormoral         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ int check_sintax(T lst, char **argv)
 	size_t i = 	1;
 	while(argv[i])
 	{
+		if(argv[i][0]  == '\0')
+			return (std::cout << "Error: Non-numeric character found\n"), free_container(lst), 1;
 		int j = 0;
 		long maxint = std::atol(argv[i]);
 		if(maxint > INTMAX)
@@ -473,7 +475,6 @@ void is_sorted(T sequence)
 		}
 		it++;
 	}
-	std::cout << Y << "After:  ";
 }
 
 template <class T>
@@ -530,6 +531,7 @@ void list_ford_johnson(std::list<PmergeMe*> sequence, char **argv)
 		npairs = npairs / 2;
 		if(npairs == 0)
 		{
+			std::cout << Y << "After:  ";
 			is_sorted(sequence);
 			std::clock_t end = std::clock();
 			double time = static_cast<double>(end - start) / CLOCKS_PER_SEC;
@@ -570,7 +572,7 @@ void vector_ford_johnson(std::vector<PmergeMe*> sequence, char **argv)
 		return ;
 	size_t npairs = 1;
 	size_t sqinitial = sequence.size();
-	std::cout << B << "Before: "; print(sequence);
+	//std::cout << B << "Before: "; print(sequence);
 	std::clock_t start = std::clock();
 	while((sqinitial / 2 ) > npairs)
 	{
@@ -600,7 +602,7 @@ void vector_ford_johnson(std::vector<PmergeMe*> sequence, char **argv)
 			is_sorted(sequence);
 			std::clock_t end = std::clock();
 			double time = static_cast<double>(end - start) / CLOCKS_PER_SEC;
-			print(sequence);
+			//print(sequence);
 			std::cout << G <<"Time to process a range of " << sequence.size() << " elements with std::vector : ";
 			std::cout << time  << " us" << std::endl;
 			free_vector(sequence);	
